@@ -1,0 +1,211 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href={% static "images/favicon.ico" %}>
+    <!-- Logo -->
+    <link rel="shortcut icon" href={% static "images/api_icon.ico" %}>
+    <!-- Bootstrap 5.2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <!-- Bootstrap 5.2 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Static CSS -->
+    <link href={% static "css/style.css" %} rel="stylesheet ">
+    <!-- Datatables JS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.1.2/css/dataTables.dateTime.min.css">
+    <title>Server Side Datatable</title>
+
+
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="col-sm">
+                    <a class="navbar-brand flex-grow-1" style="text-align: center; color: #fff; margin-left: 25px;">
+                        {% block navbar %}{% endblock navbar %}
+                    </a>
+                </div>
+                <!-- Input Search outside -->
+                <!-- <div class="d-flex" style="margin-right: 25px;">
+                    <div class="input-group input-group-sm">
+                        <input class="form-control" type="search" id="search" placeholder="Live Search..." aria-lable="Search">
+                        <a href="{% url 'home' %}" class="btn btn-secondary btn-sm"><i class="fas fa-sync-alt"></i></a>
+                    </div>
+                </div> -->
+
+                <form class="d-flex" role="search" style="margin-right: 25px;">
+                    <input class="form-control me-2" type="search" id="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+
+            </nav>
+        </header>
+
+
+
+        <!-- ===== Block content (Root) ===== -->
+        {% block content %}{% endblock content %}
+
+    </div> <!-- END // wrapper -->
+
+    <footer class="bg-dark text-center text-lg-start" id="footer" style="color: #fff;">
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">&copy; {% now "Y" %} Copyright:
+            <a class="text-light" href="#" style="text-decoration: none;">
+                <span style="color: greenyellow;">www.your-project.com</span>
+            </a>
+        </div>
+    </footer>
+
+        <!-- Bootstrap 5.2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+        <!-- Jquery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <!-- Datatables JS -->
+        <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+        <script src="//cdn.datatables.net/plug-ins/1.12.1/sorting/date-dd-MMM-yyyy.js"></script>
+        <!-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+        <script src="https://cdn.datatables.net/datetime/1.1.2/js/dataTables.dateTime.min.js"></script>
+
+        <!-- Datatables script -->
+        <script>
+            // $(document).ready(function(){
+            //     $("#example").DataTable({
+            //         // processing: true,
+            //         // serverSide: true,
+            //         ajax: {
+            //             "url": "{% url 'home' %}",
+            //             "dataSrc": "api",
+            //         },
+            //         //Datatables configurations
+            //         paging: true, //Pagination
+            //         pageLength: 10, //Data per page
+            //         lengthChange: true, // Show entries per page
+            //         autoWidth: true, // Control the auto width on columns
+            //         searching: true, // Inut Search
+            //         bInfo: true, // Info on footer
+            //         bSort: true, // filter A to Z and Z to A (and numbers)
+
+            //         columns: [
+            //             { data: 'organization_name' },
+            //             { data: 'api_name' },
+            //             { data: 'date' },
+            //             { data: 'usages' },
+            //         ],
+            //         // Disable colums with specific filter A to Z, Z to A
+            //         "columnsDefs": [{
+            //             "targets": 5, //1 column
+            //             "targets": [4, 5], // More than 1 column
+            //             "orderable": false,
+            //         }]
+            //     });
+            // })
+
+            // $(document).ready( function () {
+            // $('#example').DataTable({
+            //     // processing: true,
+            //     // serverSide: true,
+            // });
+            // } );
+
+
+			// $(document).ready(function () {
+			// 	$('#example').dataTable({
+            //         processing: true,
+			// 		serverSide: true,
+            //         searching: true,
+            //         // bInfo: true, // Info on footer
+            //         // bSort: true,
+			// 		sAjaxSource: "{% url 'api' %}",  // new url
+            //                             columns: [
+            //                                 {name: "nameorganization_name", data: 0},
+            //                                 {name: "api_name", data: 1},
+            //                                 {name: "date", data: 2},
+            //                                 {name: "usages", data: 3},
+            //                             ],
+            //         columnDefs: [
+            //         { type: 'date-dd-mmm-yyyy', targets: 0 }
+            //             ]
+			// 	});
+
+            // });
+
+            // var ss;
+
+
+
+            var minDate, maxDate;
+
+            // // Custom filtering function which will search data in column four between two values
+            $.fn.dataTable.ext.search.push(
+                function( settings, data, dataIndex ) {
+                    var min = minDate.val();
+                    var max = maxDate.val();
+                    var date = new Date( data[2] );
+                    console.log(min)
+                    console.log(max)
+                    console.log(date)
+
+
+                    if (
+                        ( min === null && max === null ) ||
+                        ( min === null && date <= max ) ||
+                        ( min <= date   && max === null ) ||
+                        ( min <= date   && date <= max )
+                    ) {
+                        return true;
+                    }
+                    return false;
+                }
+            );
+
+            $(document).ready(function() {
+
+                // Create date inputs
+                minDate = new DateTime($('#min'), {
+                    format: 'YYYY-MMM-DD'
+                });
+                maxDate = new DateTime($('#max'), {
+                    format: 'YYYY-MMM-DD'
+                });
+
+                // DataTables initialisation
+                var table = $('#example').DataTable({
+                    processing: true,
+					serverSide: true,
+                    searching: true,
+                    // bInfo: true, // Info on footer
+                    // bSort: true,
+					sAjaxSource: "{% url 'api' %}",  // new url
+                    columns: [
+                        {name: "organization_name", data: 0},
+                        {name: "api_name", data: 1},
+                        {name: "date", data: 2},
+                        {name: "usages", data: 3},
+                    ],
+                    // columnDefs: [
+                    // { type: 'date-dd-mmmm-yyyy', targets: 0 }
+                    //     ]
+				});
+
+                // Refilter the table
+                $('#min, #max').on('change', function() {
+                    
+                    // console.log(min)
+                    // console.log(max)
+                    table.draw();
+                });
+            });
+
+        </script>
+</body>
+</html>

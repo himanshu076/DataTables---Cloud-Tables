@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+<!-- Navbar Content -->
+{% block navbar %}
+<i style="color: yellowgreen;" class="fas fa-user-alt"></i>&nbsp;&nbsp; Api Usages List
+
+
+{% endblock navbar %}
+
+<!-- Page Content -->
+{% block content %}
+
+<div class="container">
+    <br><br>
+
+    <table border="0" cellspacing="5" cellpadding="5">
+        <h5>Date Range Filter</h5>
+        <tbody><tr>
+            <td>Start date:</td>
+            <td><input type="text" id="min" name="min"></td>
+
+            <td>End date:</td>
+            <td><input type="text" id="max" name="max"></td>
+        </tr>
+    </tbody>
+    </table>
+
+    <table class="table table-bordered" id="example" style="text-align: center;">
+        <thead class="table-success">
+            <tr>
+                <th>Organization_name</th>
+                <th>Api_name</th>
+                <th>Date</th>
+                <th>Usages</th>
+            </tr>
+        </thead>
+        <!-- Data from backend -->
+        <!-- {% for all_api in api %} -->
+        <!-- <tr>
+            <td>{{all_api.organization_name}}</td>
+            <td>{{all_api.api_name}}</td>
+            <td>{{all_api.date}}</td>
+            <td>{{all_api.usages}}</td>
+        </tr> -->
+        <!-- {% endfor %} -->
+    </table>
+</div> <!-- End // container -->
+
+<br><br><br><br>
+{% endblock content %}
