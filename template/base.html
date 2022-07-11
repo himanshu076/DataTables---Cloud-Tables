@@ -141,69 +141,102 @@
 
             // var ss;
 
+            // Custom filtering function which will search data in column four between two values
+            // $.fn.dataTable.ext.search.push(
+            //     console.log("this is wokring"),
+            //     function( settings, data, dataIndex ) {
+            //         console.log(settings,data, dataIndex)
+            //         var min = minDate.val();
+            //         var max = maxDate.val();
+            //         var date = new Date( data[2] );
 
 
-            var minDate, maxDate;
-
-            // // Custom filtering function which will search data in column four between two values
-            $.fn.dataTable.ext.search.push(
-                function( settings, data, dataIndex ) {
-                    var min = minDate.val();
-                    var max = maxDate.val();
-                    var date = new Date( data[2] );
-                    console.log(min)
-                    console.log(max)
-                    console.log(date)
-
-
-                    if (
-                        ( min === null && max === null ) ||
-                        ( min === null && date <= max ) ||
-                        ( min <= date   && max === null ) ||
-                        ( min <= date   && date <= max )
-                    ) {
-                        return true;
-                    }
-                    return false;
-                }
-            );
+            //         if (
+            //             ( min === null && max === null ) ||
+            //             ( min === null && date <= max ) ||
+            //             ( min <= date   && max === null ) ||
+            //             ( min <= date   && date <= max )
+            //         ) {
+            //             return true;
+            //         }
+            //         return false;
+            //     }
+            // );
 
             $(document).ready(function() {
 
-                // Create date inputs
-                minDate = new DateTime($('#min'), {
-                    format: 'YYYY-MMM-DD'
-                });
-                maxDate = new DateTime($('#max'), {
-                    format: 'YYYY-MMM-DD'
+                let minDate, maxDate;
+
+                $("#min").on("change", function() {
+                 minDate = $(this).val();
                 });
 
-                // DataTables initialisation
-                var table = $('#example').DataTable({
-                    processing: true,
+                $("#max").on("change", function() {
+                 maxDate = $(this).val();
+                });
+
+                let apiBase = "http://127.0.0.1:8000/data/";
+
+                let table
+                table = $('#example').DataTable({
+                    // processing: true,
 					serverSide: true,
                     searching: true,
                     // bInfo: true, // Info on footer
                     // bSort: true,
-					sAjaxSource: "{% url 'api' %}",  // new url
+                    // sAjaxSource,
+					// sAjaxSource:"http://127.0.0.1:8000/data/?start_date="+ minDate + "&end_date=" + maxDate, // new url
+					sAjaxSource: apiBase,
+					// sAjaxSource:"http://127.0.0.1:8000/data",
                     columns: [
                         {name: "organization_name", data: 0},
                         {name: "api_name", data: 1},
                         {name: "date", data: 2},
                         {name: "usages", data: 3},
+                        
                     ],
-                    // columnDefs: [
-                    // { type: 'date-dd-mmmm-yyyy', targets: 0 }
-                    //     ]
+
 				});
 
+                
+                $('#time').on('click',()=>{
+                    if(minDate !== undefined && maxDate !== undefined){
+
+                        table.destroy();
+                        // $('#example').empty();
+                        table = $('#example').DataTable({
+                    // processing: true,
+					serverSide: true,
+                    searching: true,
+                    // bInfo: true, // Info on footer
+                    // bSort: true,
+                    // sAjaxSource,
+					sAjaxSource:"http://127.0.0.1:8000/data/?start_date="+ minDate + "&end_date=" + maxDate, // new url
+					// sAjaxSource: apiBase,
+					// sAjaxSource:"http://127.0.0.1:8000/data",
+                    columns: [
+                        {name: "organization_name", data: 0},
+                        {name: "api_name", data: 1},
+                        {name: "date", data: 2},
+                        {name: "usages", data: 3},
+                        
+                    ],
+
+				    });
+
+                }
+                })
+
                 // Refilter the table
-                $('#min, #max').on('change', function() {
+                // $('#min, #max').on('change', function() {
+                //     console.log("this is working 00000");
+
+                //     table.draw();
                     
-                    // console.log(min)
-                    // console.log(max)
-                    table.draw();
-                });
+                //     // console.log(minDate)
+                //     // console.log(maxDate)
+                // });
+
             });
 
         </script>

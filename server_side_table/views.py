@@ -81,7 +81,13 @@ class ApiView(ServerSideDatatableView):
         The return value must be an iterable and may be an instance of
         `QuerySet` in which case `QuerySet` specific behavior will be enabled.
         """
-        if self.queryset is not None:
+
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        # data_range = ApiDatatable.objects.filter(date__range=[start_date, end_date])
+        if start_date and end_date is not None:
+            queryset = ApiDatatable.objects.filter(date__range=(start_date, end_date))
+        elif self.queryset is not None:
             queryset = self.queryset
             if isinstance(queryset, QuerySet):
                 queryset = queryset.all()
@@ -98,16 +104,19 @@ class ApiView(ServerSideDatatableView):
 
         return queryset
 
-    def post(self, request, *args, **kwargs):
-        breakpoint()
-        if self.queryset is not None:
-            queryset = self.queryset
-            if isinstance(queryset, QuerySet):
-                queryset = queryset.all()
-        elif self.model is not None:
-            queryset = self.model._default_manager.all()
 
-        return self.get(request, *args, **kwargs)
+
+
+    # def post(self, request, *args, **kwargs):
+    #     # breakpoint()
+    #     if self.queryset is not None:
+    #         queryset = self.queryset
+    #         if isinstance(queryset, QuerySet):
+    #             queryset = queryset.all()
+    #     elif self.model is not None:
+    #         queryset = self.model._default_manager.all()
+
+    #     return self.get(request, *args, **kwargs)
 
 def home(request):
     # breakpoint
