@@ -13,19 +13,36 @@
 <div class="container">
     <br><br>
 
-    <table border="0" cellspacing="5" cellpadding="5">
-        <h5>Date Range Filter</h5>
-        <tbody><tr>
-            <td>Start date:</td>
-            <td><input type="date" id="min" name="min"></td>
+    <h5>Date Range Filter</h5>
+    <div class="d-flex align-items-center">
+        <table border="0" cellspacing="5" cellpadding="5">
+            <tbody>
+                <tr>
+                    <td>Start date:</td>
+                    <td><input type="date" id="min" name="min"></td>
 
-            <td>End date:</td>
-            <td><input type="date" id="max" name="max"></td>
-            <td><button type="submit" id="time" class="btn btn-primary">Submit</button></td>
-        </tr>
+                    <td>End date:</td>
+                    <td><input type="date" id="max" name="max"></td>
 
-    </tbody>
-    </table>
+                    <td>
+                        <select class="form-select form-select-sm" placeholder="" id="menu" aria-label="Default select example">
+                            <option selected value="">select menu</option>
+                            {% for api_list in api%}
+                            <option>{{api_list.api_name}}</option>
+                            {% endfor %}
+                    </td>
+                    <td><button type="submit" id="submit" class="btn btn-primary btn-sm ">Submit</button></td>
+                    <td><button type="button" id="reset" class="btn btn-primary btn-sm ">Reset</button></td>
+                    <td>
+                    </td>
+                </tr>
+        </tbody>
+        </table>
+        <div class="ms-auto">
+            <label for="" class="">Count:</label>
+            <input type="text" id="total" value="" disabled class="form-control-sm" size="5">
+        </div>
+    </div>
 
     <table class="table table-bordered" id="example" style="text-align: center;">
         <thead class="table-success">
@@ -36,15 +53,6 @@
                 <th>Usages</th>
             </tr>
         </thead>
-        <!-- Data from backend -->
-        <!-- {% for all_api in api %} -->
-        <!-- <tr>
-            <td>{{all_api.organization_name}}</td>
-            <td>{{all_api.api_name}}</td>
-            <td>{{all_api.date}}</td>
-            <td>{{all_api.usages}}</td>
-        </tr> -->
-        <!-- {% endfor %} -->
     </table>
 </div> <!-- End // container -->
 

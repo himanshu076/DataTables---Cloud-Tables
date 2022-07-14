@@ -1,92 +1,55 @@
-import re
-from urllib import request
-from django.db.models import Q
+from django.core.exceptions import ImproperlyConfigured
+from django.db.models import Q, QuerySet, Sum
+from django.http import JsonResponse
 from django.shortcuts import render
-from django.utils.html import escape
-from django_datatables_view.base_datatable_view import BaseDatatableView
+from django_serverside_datatable import datatable
 from django_serverside_datatable.views import ServerSideDatatableView
 
 from server_side_table.models import ApiDatatable
 
 
-from django.views import View
-from django.http import JsonResponse
-from django.core.exceptions import ImproperlyConfigured
-from django.db.models import QuerySet
-from django_serverside_datatable import datatable
-
 # Create your views here.
-
-
-
-
-# class ApiView(BaseDatatableView):
-#     # The model we're going to show
-#     model = ApiDatatable
-
-#     # define the columns that will be returned
-#     columns = ['organization_name', 'api_name', 'date', 'usages']
-
-#     # define column names that will be used in sorting
-#     # order is important and should be same as order of columns
-#     # displayed by datatables. For non-sortable columns use empty
-#     # value like ''
-#     order_columns = ['organization_name', 'api_name', 'date', 'usages']
-
-#     # set max limit of records returned, this is used to protect our site if someone tries to attack our site
-#     # and make it return huge amount of data
-#     max_display_length = 500
-
-#     def render_column(self, row, column):
-#         # We want to render user as a custom column
-#         if column == 'user':
-#             # escape HTML for security reasons
-#             return escape('{0} {1}'.format(row.customer_firstname, row.customer_lastname))
-#         else:
-#             return super(ApiView, self).render_column(row, column)
-
-#     def filter_queryset(self, qs):
-#         # use parameters passed in GET request to filter queryset
-
-#         # simple example:
-#         search = self.request.GET.get('search[value]', None)
-#         if search:
-#             qs = qs.filter(name__istartswith=search)
-
-#         # more advanced example using extra parameters
-#         filter_customer = self.request.GET.get('customer', None)
-
-#         if filter_customer:
-#             customer_parts = filter_customer.split(' ')
-#             qs_params = None
-#             for part in customer_parts:
-#                 q = Q(customer_firstname__istartswith=part) | Q(customer_lastname__istartswith=part)
-#                 qs_params = qs_params | q if qs_params else q
-#             qs = qs.filter(qs_params)
-#         return qs
-
-
-# self.request.get
-
 class ApiView(ServerSideDatatableView):
+    """
+    This is the view function that manage the GET, PUT, POST &
+    DELETE e.t.c operations
+    """
 
     queryset = ApiDatatable.objects.all()
     columns = ['organization_name', 'api_name', 'date', 'usages']
 
+    def get(self, request, *args, **kwargs):
+        result = datatable.DataTablesServer(
+            request, self.columns, self.get_queryset()).output_result()
+        sum = self.get_queryset().aggregate(sum=Sum('usages'))
+        search = ''
+        search = self.request.GET.get('sSearch')
+        if search != '':
+            sum = self.get_queryset().filter(
+                Q(organization_name__contains=search) |
+                Q(api_name__contains=search) |
+                Q(date__contains=search) |
+                Q(usages__contains=search)
+            ).aggregate(sum=Sum('usages'))
+            result.update(sum)
+        else:
+            result.update(sum)
+        return JsonResponse(result, safe=False)
+
     def get_queryset(self):
-        # breakpoint()
         """
         Return the list of items for this view.
-
-        The return value must be an iterable and may be an instance of
-        `QuerySet` in which case `QuerySet` specific behavior will be enabled.
         """
 
         start_date = self.request.GET.get('start_date')
         end_date = self.request.GET.get('end_date')
-        # data_range = ApiDatatable.objects.filter(date__range=[start_date, end_date])
-        if start_date and end_date is not None:
+        api_name = self.request.GET.get('api_name')
+        if start_date and end_date and api_name is not None:
+            queryset = ApiDatatable.objects.filter(date__range=(start_date, end_date), api_name=api_name)
+        elif start_date and end_date is not None and api_name is None:
             queryset = ApiDatatable.objects.filter(date__range=(start_date, end_date))
+        elif api_name is not None:
+            queryset = ApiDatatable.objects.filter(api_name=api_name)
         elif self.queryset is not None:
             queryset = self.queryset
             if isinstance(queryset, QuerySet):
@@ -105,21 +68,8 @@ class ApiView(ServerSideDatatableView):
         return queryset
 
 
-
-
-    # def post(self, request, *args, **kwargs):
-    #     # breakpoint()
-    #     if self.queryset is not None:
-    #         queryset = self.queryset
-    #         if isinstance(queryset, QuerySet):
-    #             queryset = queryset.all()
-    #     elif self.model is not None:
-    #         queryset = self.model._default_manager.all()
-
-    #     return self.get(request, *args, **kwargs)
-
 def home(request):
-    # breakpoint
-    # all_api = ApiDatatable.objects.all()
-    # context = {"api":all_api}
-    return render(request, "home.html")
+    api_list = ApiDatatable.objects.values('api_name')
+    context = {"api":api_list}
+
+    return render(request, "home.html", context)
